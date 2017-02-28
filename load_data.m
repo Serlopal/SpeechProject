@@ -1,4 +1,4 @@
-function [ data,Fs, file_names ] = load_data()
+function [ data,Fs, file_names ] = load_data(db_name)
 %this functions loads the audio data from the database
 
     
@@ -6,7 +6,10 @@ function [ data,Fs, file_names ] = load_data()
     dirinfo = dir();
     dirinfo(~[dirinfo.isdir]) = []; 
     parent_dir = ismember( {dirinfo.name}, {'.', '..'});
-    dirinfo(parent_dir) = [];  
+    dirinfo(parent_dir) = [];
+    
+    db_dir = ismember( {dirinfo.name}, {db_name});
+    dirinfo(~db_dir) = [];
 
     thisdir = dirinfo.name;
     files = dir(fullfile(thisdir, '*.wav'));
