@@ -1,23 +1,34 @@
-function [data, Fs] = load_data(db_path)
-% This functions loads the audio data from the database
+function [ data,Fs, file_names ] = load_data()
+%this functions loads the audio data from the database
 
-    cd(db_path);
-    files = dir();
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
+    dirinfo = dir();
+    dirinfo(~[dirinfo.isdir]) = []; 
+    parent_dir = ismember( {dirinfo.name}, {'.', '..'});
+    dirinfo(parent_dir) = [];  
+
+    thisdir = dirinfo.name;
+    files = dir(fullfile(thisdir, '*.wav'));
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
     data = cell(1,length(files));
+    file_names = cell(1,length(files));
 
     for i=1:length(files)
-        if endsWith(files(i).name, '.wav')
+        if strfind(files(i).name,'.wav')
             s = strcat(files(i).folder,'\',files(i).name);
             disp(s);
             [ys,Fs] = audioread(s);
             data{i} = ys; 
+            file_names{i} = s;
         end
     end
     
      data = data(~cellfun('isempty',data));
+     file_names = file_names(~cellfun('isempty',file_names));
 
 
 
-    cd ..
+
 end
 
