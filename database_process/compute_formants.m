@@ -7,7 +7,7 @@ x1 = audio.*hamming(length(audio));
 preemph = [1 0.63];
 x1 = filter(1,preemph,x1);
 
-A = lpc(x1,10);
+A = lpc(x1,18);
 rts = roots(A);
 
 rts = rts(imag(rts)>=0);
@@ -22,6 +22,14 @@ for kk = 1:length(frqs)
         formants(nn) = frqs(kk);
         nn = nn+1;
     end
+end
+
+if length(formants) < 2
+    disp('short');
+end
+
+if length(formants) > 2
+    formants = formants(1:2);
 end
 
 end

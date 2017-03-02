@@ -22,31 +22,22 @@ vowels_men_formants = zeros(length(vowels_men),2);
 vowels_women_formants = zeros(length(vowels_women),2);
 vowels_kids_formants = zeros(length(vowels_kids),2);
 
+indexes_men = cell(length(vowels_men),1);
+indexes_women = cell(length(vowels_women),1);
+indexes_kids = cell(length(vowels_kids),1);
+
 for i=1:length(vowels_men)
     vowels_men_formants(i,:) = compute_formants(vowels_men{i},Fs_men);
+    indexes_men{i} = get_label(file_names_men{i});
 end
 for i=1:length(vowels_women)
     vowels_women_formants(i,:) = compute_formants(vowels_women{i},Fs_women);
+    indexes_women{i} = get_label(file_names_women{i});
 end
 for i=1:length(vowels_kids)
     vowels_kids_formants(i,:) = compute_formants(vowels_kids{i},Fs_kids);
+    indexes_kids{i} = get_label(file_names_kids{i});
 end
 
-
 %%plotting
-
-
-plot(vowels_men_formants(:,1),vowels_men_formants(:,2), 'ob' );
-
-
-
-
-
-
-
-
-
-
-
-
-
+plot_clusters(vowels_men_formants, indexes_men);

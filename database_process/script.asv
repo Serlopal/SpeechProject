@@ -1,0 +1,115 @@
+clear all;close all;clc;
+
+%%This scripts loads all audio files in the  directory where the script is
+%%located into a cell structure that contains the audios and a common Fs
+%%for all of them
+[audios_men,Fs_men, file_names_men] = load_data('audio_files_men');
+[audios_women,Fs_women, file_names_women] = load_data('audio_files_women');
+[audios_kids,Fs_kids, file_names_kids] = load_data('audio_files_kids');
+
+
+vowels_men = get_letter_nucleous('times_men_ordered.txt', audios_men,Fs_men);
+vowels_women = get_letter_nucleous('times_women_ordered.txt', audios_women,Fs_women);
+vowels_kids = get_letter_nucleous('times_kids_ordered.txt', audios_kids,Fs_kids);
+
+
+vowels_men_formants = zeros(length(vowels_men),2);
+vowels_women_formants = zeros(length(vowels_women),2);
+vowels_kids_formants = zeros(length(vowels_kids),2);
+
+indexes_men = cell(length(vowels_men),1);
+indexes_women = cell(length(vowels_women),1);
+indexes_kids = cell(length(vowels_kids),1);
+
+for i=1:length(vowels_men)
+    vowels_men_formants(i,:) = compute_formants(vowels_men{i},Fs_men);
+    indexes_men{i} = get_label(file_names_men{i});
+end
+for i=1:length(vowels_women)
+    vowels_women_formants(i,:) = compute_formants(vowels_women{i},Fs_women);
+    indexes_women{i} = get_label(file_names_women{i});
+end
+for i=1:length(vowels_kids)
+    vowels_kids_formants(i,:) = compute_formants(vowels_kids{i},Fs_kids);
+    indexes_kids{i} = get_label(file_names_kids{i});
+end
+
+
+%%plotting
+
+ae_index_men = strmatch('ae',indexes_men);
+ae_vowels = vowels_men_formants(ae_index_men,:);
+
+ah_index_men = strmatch('ah',indexes_men);
+ah_vowels = vowels_men_formants(ah_index_men,:);
+
+aw_index_men = strmatch('aw',indexes_men);
+aw_vowels = vowels_men_formants(aw_index_men,:);
+
+eh_index_men = strmatch('eh',indexes_men);
+eh_vowels = vowels_men_formants(eh_index_men,:);
+
+er_index_men = strmatch('er',indexes_men);
+er_vowels = vowels_men_formants(er_index_men,:);
+
+ey_index_men = strmatch('ey',indexes_men);
+ey_vowels = vowels_men_formants(ey_index_men,:);
+
+ih_index_men = strmatch('ih',indexes_men);
+ih_vowels = vowels_men_formants(ih_index_men,:);
+
+iy_index_men = strmatch('iy',indexes_men);
+iy_vowels = vowels_men_formants(iy_index_men,:);
+
+oa_index_men = strmatch('oa',indexes_men);
+oa_vowels = vowels_men_formants(oa_index_men,:);
+
+oo_index_men = strmatch('oo',indexes_men);
+oo_vowels = vowels_men_formants(oo_index_men,:);
+
+uh_index_men = strmatch('uh',indexes_men);
+uh_vowels = vowels_men_formants(uh_index_men,:);
+
+uw_index_men = strmatch('uw',indexes_men);
+uw_vowels = vowels_men_formants(uw_index_men,:);
+
+plot(ae_vowels(:,1),ae_vowels(:,2), 'ob' );
+hold on;
+plot(ah_vowels(:,1),ah_vowels(:,2), 'or' );
+hold on;
+plot(aw_vowels(:,1),aw_vowels(:,2), 'og' );
+hold on;
+plot(eh_vowels(:,1),eh_vowels(:,2), 'ow' );
+hold on;
+plot(er_vowels(:,1),er_vowels(:,2), 'oy' );
+hold on;
+plot(ey_vowels(:,1),ey_vowels(:,2), 'ob' );
+hold on;
+plot(ih_vowels(:,1),ih_vowels(:,2), 'om' );
+hold on;
+plot(iy_vowels(:,1),iy_vowels(:,2), 'oc' );
+hold on;
+plot(oa_vowels(:,1),oa_vowels(:,2), 'Color',[0.5 0 0.5],'Marker','+')
+hold on;
+plot(oo_vowels(:,1),oo_vowels(:,2), 'Color',[0.5 0.5 0],'Marker','+')
+hold on;
+plot(uh_vowels(:,1),uh_vowels(:,2), 'Color',[0. 0 0.33],'Marker','+')
+
+
+
+
+
+% plot(vowels_men_formants(:,1),vowels_men_formants(:,2), 'ob' );
+
+
+
+
+
+
+
+
+
+
+
+
+
