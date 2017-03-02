@@ -7,7 +7,7 @@ x1 = audio.*hamming(length(audio));
 preemph = [1 0.63];
 x1 = filter(1,preemph,x1);
 
-A = lpc(x1,8);
+A = lpc(x1,10);
 rts = roots(A);
 
 rts = rts(imag(rts)>=0);
