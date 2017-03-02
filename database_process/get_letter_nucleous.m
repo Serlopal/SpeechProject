@@ -16,7 +16,7 @@ function [ cut_audios ] = get_letter_nucleous(times_file,audios,Fs)
         
         cut_audios{idx} = audios{idx}(begin:finish);
         
-        disp(tline)
+%         disp(tline);
         tline = fgets(fid);
         idx = idx + 1;
     end

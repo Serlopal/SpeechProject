@@ -1,8 +1,8 @@
-function [ formants ] = compute_formants( audio )
+function [ formants ] = compute_formants( audio, Fs )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-x1 = audio.*hamming(length(x));
+x1 = audio.*hamming(length(audio));
 
 preemph = [1 0.63];
 x1 = filter(1,preemph,x1);

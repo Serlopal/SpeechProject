@@ -20,7 +20,7 @@ function [ data,Fs, file_names ] = load_data(db_name)
     for i=1:length(files)
         if strfind(files(i).name,'.wav')
             s = strcat(files(i).folder,'\',files(i).name);
-            disp(s);
+%             disp(s);
             [ys,Fs] = audioread(s);
             data{i} = ys; 
             file_names{i} = s;
