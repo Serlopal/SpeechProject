@@ -12,4 +12,36 @@ vowels_men = get_letter_nucleous('times_men_ordered.txt', audios_men,Fs_men);
 vowels_women = get_letter_nucleous('times_women_ordered.txt', audios_women,Fs_women);
 vowels_kids = get_letter_nucleous('times_kids_ordered.txt', audios_kids,Fs_kids);
 
-formants1 = compute_formants(vowels_kids{1}, Fs_kids);
+
+vowels_men_formants = zeros(length(vowels_men),2);
+vowels_women_formants = zeros(length(vowels_women),2);
+vowels_kids_formants = zeros(length(vowels_kids),2);
+
+for i=1:length(vowels_men)
+    vowels_men_formants(i,:) = compute_formants(vowels_men{i},Fs_men);
+end
+for i=1:length(vowels_women)
+    vowels_women_formants(i,:) = compute_formants(vowels_women{i},Fs_women);
+end
+for i=1:length(vowels_kids)
+    vowels_kids_formants(i,:) = compute_formants(vowels_kids{i},Fs_kids);
+end
+
+
+%%plotting
+
+
+plot(vowels_men_formants(:,1),vowels_men_formants(:,2), 'ob' );
+
+
+
+
+
+
+
+
+
+
+
+
+
