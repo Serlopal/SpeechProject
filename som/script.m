@@ -1,8 +1,8 @@
 clear all;close all;clc;
 
 % db = 'database_process\vowels_men';
-db = 'database_process\vowels_women';
-% db = 'database_process\vowels_kids';
+% db = 'database_process\vowels_women';
+db = 'database_process\vowels_kids';
 
 %% Create spectrograms from all audio files
 create_spectrograms(db);
