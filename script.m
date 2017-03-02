@@ -7,4 +7,13 @@ path = strcat(pwd, '\', db);
 % [data,Fs,file_names] = load_data(db);
 
 %% Create spectrograms from all audio files
-create_spectrograms(db, data, Fs, file_names);
+% create_spectrograms(db, data, Fs, file_names);
+
+%% Organize spectrograms with SOM
+epochs = 200;
+output_nodes = 100;
+neig_size = 5;
+eta = 0.5;
+tau = 10;
+
+som(db, epochs, output_nodes, neig_size, eta, tau);
