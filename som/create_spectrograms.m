@@ -26,20 +26,27 @@ for i=1:length(files)
         
         % Get file
         s = strcat(files(i).folder,'\',files(i).name);
-        [ys,~] = audioread(s);
+        [y,fs] = audioread(s);
+        window = hamming(64);
+        noverlap = 32;
+        nfft = 128;  
         
-        % Save spectrogram
-        spectrogram(ys);
+        % Create spectrogram
+        [S,F,T,P] = spectrogram(y,window,noverlap,nfft,fs,'yaxis');
+        final = surf(T,F,10*log10(P),'edgecolor','none');
+        axis tight;
+        view(0,90);        
+        set(gca,'clim',[-80 -30]);
+        
+        % Remove irrelevant information
+        colormap(gray);
         set(gca,'position',[0 0 1 1],'units','normalized')
         axis off 
-%         im = rgb2gray(im);
-%         colormap(1-gray);
-        colormap(gray)
         
         token = strsplit(files(i).name,{'\','.'});
         name = token{length(token)-1}; % The last one is the .wav extention
 
-        print(name,'-r5', '-dpng') % r5 = 71x34 (2414)
+        print(name,'-r6', '-dpng') % r5 = 29x22 (638) // r6 = 910
     end
 end
 

@@ -3,8 +3,7 @@ function som(db, epochs, samples, output_nodes, neig_size, eta, tau)
     % database passed as an argument
 
     grid_size = sqrt(output_nodes);
-    colormap(hsv(12));
-%     colormap([1 1 1; 0 0 1; 0 1 0; 0 1 1; 1 0 0; 1 0 1; 1 1 0]) % TODO: put more colors
+    colormap(hsv);
 
     % Format input and tags
     [patterns, tags] = formatData(db, samples);
@@ -58,8 +57,17 @@ function som(db, epochs, samples, output_nodes, neig_size, eta, tau)
     a = ones(1, output_nodes)*num_patt+1;
     a(pos) = 1:num_patt;
     
-    p = [tags;'00'];
-    aux = p(reshape(a,grid_size,grid_size));
+
+    % Convert tags to numbers
+    tags_num = double(tags);
+    tags_num_str = num2str(tags_num);
+    for i = 1:length(tags_num_str)
+        row = tags_num_str(i,:);
+        tags_num(i) = str2double(row(find(~isspace(row))));
+    end    
+    tags_num = tags_num(:,1);
+    
+    p = [tags_num;0];
     image(p(reshape(a,grid_size,grid_size))+1);
 end
 
@@ -79,7 +87,7 @@ function [patterns, tags] = formatData(db, samples)
     
     for i = 1:max
         if strfind(files(i).name,'.png')
-            img = imread(files(i).name);
+            img = rgb2gray(imread(files(i).name));
             pat = img(:)'; %row
             
             patterns = [patterns; pat];
