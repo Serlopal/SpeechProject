@@ -32,7 +32,9 @@ for i=1:length(files)
         spectrogram(ys);
         set(gca,'position',[0 0 1 1],'units','normalized')
         axis off 
-        colormap(1-gray);
+%         im = rgb2gray(im);
+%         colormap(1-gray);
+        colormap(gray)
         
         token = strsplit(files(i).name,{'\','.'});
         name = token{length(token)-1}; % The last one is the .wav extention
