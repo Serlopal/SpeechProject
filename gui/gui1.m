@@ -1,6 +1,8 @@
 function varargout = gui1(varargin)
 global pos;
 global dict;
+global winning_audios;
+global db;
 % GUI1 MATLAB code for gui1.fig
 %      GUI1, by itself, creates a new GUI1 or raises the existing
 %      singleton*.
@@ -98,7 +100,24 @@ switch popup_sel_index
     case 4
         plot(membrane);
     case 5
-        surf(peaks);
+        global winning_audios;global db;
+        db = 'database_process\vowels_men';
+        %% Organize spectrograms with SOM
+        epochs = 1;
+        samples = 540; %12 is a complete speaker
+        output_nodes = 1600;
+        neig_size = 5;
+        eta = 0.5;
+        tau = 20;
+
+        [winning_audios, img] = som(db, epochs, samples, output_nodes, neig_size, eta, tau);
+        
+        image(img);       
+        fig  = gcf;       
+        dcm_obj = datacursormode(fig);
+        set(dcm_obj,'UpdateFcn',@cursor_audio);
+        
+        
     case 6
         data = generatedata();
         createdictionary(data);
@@ -110,7 +129,7 @@ switch popup_sel_index
         hold off;
         fig  = gcf;       
         dcm_obj = datacursormode(fig);
-        set(dcm_obj,'UpdateFcn',@myfunction);
+        set(dcm_obj,'UpdateFcn',@cursor_audio);
         
 
         
@@ -179,9 +198,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
      set(hObject,'BackgroundColor','white');
 end
 
-set(hObject, 'String', {'plot(rand(5))', 'plot(sin(1:0.01:25))', 'bar(1:.5:10)', 'plot(membrane)', 'surf(peaks)', 'vowels'});
-
-
+set(hObject, 'String', {'plot(rand(5))', 'plot(sin(1:0.01:25))', 'bar(1:.5:10)', 'plot(membrane)', 'SOM', 'vowels'});
 
 function txt = myupdatefcn(~, event_obj)
   pos = event_obj.Position;
@@ -189,58 +206,37 @@ function txt = myupdatefcn(~, event_obj)
   txt = {'Point to Compute'};
   set(0,'userdata',pos);
 
-
-% --- Executes on button press in getCursor1.
-function getCursor1_Callback(hObject, eventdata, handles)
-% hObject    handle to getCursor1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-[ya,Fsa] = audioread('a.mp3');
-[ye,Fse] = audioread('e.mp3');
-
-
-fig  = gcf;       
-dcm_obj = datacursormode(fig);
-c_info = getCursorInfo(dcm_obj);      
-%textLabel = sprintf('Variable info_struct = %f', c_info.Position);
-%set(handles.text1, 'String', textLabel);
-if (isequal(c_info.Position,[4,4]))
-    sound(ya,Fsa);
-elseif (isequal(c_info.Position,[2,2]))
-    sound(ye,Fse);
-end
-
-
-function output_txt = myfunction(f,event_obj)
-global pos;global dict;
-    [ya,Fsa] = audioread('a.mp3');
-    [ye,Fse] = audioread('e.mp3');
-    [yi,Fsi] = audioread('i.mp3');
-    [yo,Fso] = audioread('o.mp3');
-    [yu,Fsu] = audioread('u.mp3');
+function output_txt = cursor_audio(f,event_obj)
+global pos;global dict;global winning_audios;global db;
     
-    ys = {ya; ye; yi; yo; yu};
-    Fs = [Fsa Fse Fsi Fso Fsu];
-    
+
+    %%load audio routes for db
     pos = get(event_obj,'Position');
     disp(pos);
-    output_txt = sprintf('(%d, %d)',pos(1), pos(2));
-    key = strcat(num2str(pos(1)), num2str(pos(2)));
     
-    index=dict(key);
-    sound(ys{index}, Fs(index));
+    %%get audio
+    index = winning_audios(pos(2),pos(1));
+    output_txt = sprintf('(%d, %d)',pos(2), pos(1));
+
+    if (index==541)
+        ;
+    else
+        %%load audio
+        cd ..
+        cd (strcat(pwd,'\',db));   
+        dirinfo = dir();
+        parent_dir = ismember( {dirinfo.name}, {'.', '..'});
+        dirinfo(parent_dir) = [];
+        s = strcat(dirinfo(index).folder,'\',dirinfo(index).name);
+
+        cd ..
+        cd ..
+        cd som\
+
+        [ys,Fs] = audioread(s);
+        sound(ys, Fs);
+    end
+    
  
 
-function [] = createdictionary(data)
-    global dict;
-    dict = containers.Map;
-    for j=1:length(data)
-        for i=1:size(data{j},1)   
-            s1 = num2str(data{j}(i,1));
-            s2 = num2str(data{j}(i,2));
-            s3 = strcat(s1,s2);
-            dict(s3) = data{j}(i,3);     
-        end
-    end
     
