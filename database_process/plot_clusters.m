@@ -38,14 +38,14 @@ uh_vowels = vowels(uh_index_men,:);
 uw_index_men = strmatch('uw',indexes);
 uw_vowels = vowels(uw_index_men,:);
 
-centroid_ae = [mean(ae_vowels, 1); std(ae_vowels, 0, 1)];
-centroid_ah = [mean(ah_vowels, 1); std(ah_vowels, 0, 1)];
-centroid_aw = [mean(aw_vowels, 1); std(aw_vowels, 0, 1)];
-centroid_eh = [mean(eh_vowels, 1); std(eh_vowels, 0, 1)];
-centroid_ei = [mean(ei_vowels, 1); std(ei_vowels, 0, 1)];
-centroid_er = [mean(er_vowels, 1); std(er_vowels, 0, 1)];
-centroid_ih = [mean(ih_vowels, 1); std(ih_vowels, 0, 1)];
-centroid_iy = [mean(iy_vowels, 1); std(ah_vowels, 0, 1)];
+% centroid_ae = [mean(ae_vowels, 1); std(ae_vowels, 0, 1)];
+% centroid_ah = [mean(ah_vowels, 1); std(ah_vowels, 0, 1)];
+% centroid_aw = [mean(aw_vowels, 1); std(aw_vowels, 0, 1)];
+% centroid_eh = [mean(eh_vowels, 1); std(eh_vowels, 0, 1)];
+% centroid_ei = [mean(ei_vowels, 1); std(ei_vowels, 0, 1)];
+% centroid_er = [mean(er_vowels, 1); std(er_vowels, 0, 1)];
+% centroid_ih = [mean(ih_vowels, 1); std(ih_vowels, 0, 1)];
+% centroid_iy = [mean(iy_vowels, 1); std(ah_vowels, 0, 1)];
 
 % plot(centroid_ae(1,1), centroid_ae(1,2), 'xb');
 % hold on;
@@ -79,7 +79,6 @@ centroid_iy = [mean(iy_vowels, 1); std(ah_vowels, 0, 1)];
 % hold on;
 % plot_ellipse(centroid_iy(1,1), centroid_iy(1,2), centroid_iy(2,1), centroid_iy(2,2));
 
-hold on;
 plot(ae_vowels(:,1),ae_vowels(:,2), 'ob' );
 hold on;
 plot(ah_vowels(:,1),ah_vowels(:,2), 'or' );
@@ -108,7 +107,6 @@ set(gca, 'ydir','reverse')
 set(gca, 'xdir','reverse')
 view([90 -90])
 legend('ae(had)','ah(hod)','aw(hawed)','eh(head)','ey/ei(hayed)','er(heard)','ih(hid)','iy(heed)', 'oa(hoed)', 'oo(hood)', 'uh(hud)', 'uw(who''d)')
-figure;
 
 end
 

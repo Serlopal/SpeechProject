@@ -92,14 +92,17 @@ cla;
 popup_sel_index = get(handles.popupmenu1, 'Value');
 switch popup_sel_index
     case 1
-        plot(rand(5));        
+        cd ..\database_process\
+        global dict;
+        [dict, vowels_men_formants, indexes_men] = formants('audio_files_women','times_women_ordered.txt');
+        plot_clusters(vowels_men_formants, indexes_men);
+        fig  = gcf;       
+        dcm_obj = datacursormode(fig);
+        set(dcm_obj,'UpdateFcn',@cursor_formants);
+        cd ..\gui\
+        
     case 2
-        plot(sin(1:0.01:25.99));
-    case 3
-        bar(1:.5:10);
-    case 4
-        plot(membrane);
-    case 5
+        cd ..\som\
         global winning_audios;global db;
         db = 'database_process\vowels_men';
         %% Organize spectrograms with SOM
@@ -111,29 +114,13 @@ switch popup_sel_index
         tau = 20;
 
         [winning_audios, img] = som(db, epochs, samples, output_nodes, neig_size, eta, tau);
-        
-        image(img);       
-        fig  = gcf;       
-        dcm_obj = datacursormode(fig);
-        set(dcm_obj,'UpdateFcn',@cursor_audio);
-        
-        
-    case 6
-        data = generatedata();
-        createdictionary(data);
-        colors = ['bo' 'rx' 'g*' 'yo' 'k*'];
-        for i=1:length(data)
-            plot(data{i}(:,1), data{i}(:,2), colors(i));
-            hold on;
-        end
-        hold off;
-        fig  = gcf;       
-        dcm_obj = datacursormode(fig);
-        set(dcm_obj,'UpdateFcn',@cursor_audio);
-        
 
-        
-        
+        plot_som(img);
+        fig  = gcf;
+        dcm_obj = datacursormode(fig);
+        set(dcm_obj,'UpdateFcn',@cursor_audio);
+        cd ..\gui\
+              
 end
 
 
@@ -198,16 +185,10 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
      set(hObject,'BackgroundColor','white');
 end
 
-set(hObject, 'String', {'plot(rand(5))', 'plot(sin(1:0.01:25))', 'bar(1:.5:10)', 'plot(membrane)', 'SOM', 'vowels'});
-
-function txt = myupdatefcn(~, event_obj)
-  pos = event_obj.Position;
-  disp(['You clicked X:',num2str(pos(1)),', Y:',num2str(pos(2))]);
-  txt = {'Point to Compute'};
-  set(0,'userdata',pos);
+set(hObject, 'String', {'Formants', 'SOM'});
 
 function output_txt = cursor_audio(f,event_obj)
-global pos;global dict;global winning_audios;global db;
+global pos;global winning_audios;global db;
     
 
     %%load audio routes for db
@@ -231,7 +212,34 @@ global pos;global dict;global winning_audios;global db;
 
         cd ..
         cd ..
-        cd som\
+        cd gui\
+
+        [ys,Fs] = audioread(s);
+        sound(ys, Fs);
+    end
+    
+function output_txt = cursor_formants(f,event_obj)
+global pos;global dict;global db;
+
+    %%load audio routes for db
+    pos = get(event_obj,'Position');
+    disp(pos);
+    
+    %%get audio
+    keySet = strcat(num2str(pos(1)),num2str(pos(2)));
+    if (isKey(dict,keySet))
+        index = dict(keySet);
+        output_txt = sprintf('(%d, %d)',pos(1), pos(2));
+
+        %%load audio
+        cd ..\database_process\vowels_women\
+        dirinfo = dir();
+        parent_dir = ismember( {dirinfo.name}, {'.', '..'});
+        dirinfo(parent_dir) = [];
+        s = strcat(dirinfo(index).folder,'\',dirinfo(index).name);
+
+        cd ..
+        cd ..\gui\
 
         [ys,Fs] = audioread(s);
         sound(ys, Fs);

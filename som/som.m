@@ -85,7 +85,7 @@ function [winning_audios,aux] = som(db, epochs, samples, output_nodes, neig_size
 
     p = [tags;0];
     aux = p(reshape(a,grid_size,grid_size))+1;
-    image(aux);
+%     image(aux);
 end
 
 
