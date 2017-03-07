@@ -1,13 +1,34 @@
 function som(db, epochs, samples, output_nodes, neig_size, eta, tau)
+
+
+    colormap([0 0 0; 0 0 1; 0 1 1; 1 0 1; 1 0 0; 0 1 0; 1 1 1; 1 1 0; 0.5 0.5 0 ; 0.5 1 0.5 ; 0.33 0.34 0.33 ; 0 0.5 0.5; 0.8 0 0.2])
+
+    %% class dictionary
+    dict = containers.Map;
+    dict('ae')=1;dict('ah')=2;dict('aw')=3;dict('eh')=4;dict('ei')=5;dict('er')=6;dict('ih')=7;
+    dict('iy')=8;dict('oa')=9;dict('oo')=10;dict('uh')=11;dict('uw')=12;
+
+
+    
+
     % This function organize the spectrograms (previously created) from the
     % database passed as an argument
 
     grid_size = sqrt(output_nodes);
-    colormap(hsv);
+    %colormap(hsv);
 
     % Format input and tags
     [patterns, tags] = formatData(db, samples);
     [num_patt, num_feat] = size(patterns);
+    
+    new_tags = zeros(1,length(tags));
+    %% tag conversion
+    aux1 = [];
+    for i=1:length(tags)
+        aux1 = [aux1;cellstr(tags(i,:))];
+        new_tags(i)=dict(tags(i,:));
+    end
+    tags = new_tags';
 
     %% Train 
     % Weight init
@@ -58,17 +79,9 @@ function som(db, epochs, samples, output_nodes, neig_size, eta, tau)
     a(pos) = 1:num_patt;
     
 
-    % Convert tags to numbers
-    tags_num = double(tags);
-    tags_num_str = num2str(tags_num);
-    for i = 1:length(tags_num_str)
-        row = tags_num_str(i,:);
-        tags_num(i) = str2double(row(find(~isspace(row))));
-    end    
-    tags_num = tags_num(:,1);
-    
-    p = [tags_num;0];
-    image(p(reshape(a,grid_size,grid_size))+1);
+    p = [tags;0];
+    aux = p(reshape(a,grid_size,grid_size));
+    image(aux+1);
 end
 
 
