@@ -64,7 +64,7 @@ guidata(hObject, handles);
 % This sets up the initial plot - only do when we are invisible
 % so window can get raised using gui1.
 if strcmp(get(hObject,'Visible'),'off')
-    plot(rand(5));
+%     plot(rand(5));
 end
 
 % UIWAIT makes gui1 wait for user response (see UIRESUME)
