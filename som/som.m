@@ -1,8 +1,7 @@
-function som(db, epochs, samples, output_nodes, neig_size, eta, tau)
-% This function organize the spectrograms (previously created) from the
-% database passed as an argument
-    scale = [0 0 0; 0 0 1; 0 1 1; 1 0 1; 1 0 0; 0 1 0; 1 1 1; 1 1 0; 0.5 0.5 0 ; 0.5 1 0.5 ; 0.33 0.34 0.33 ; 0 0.5 0.5; 0.8 0 0.2];
-    colormap(scale);
+function [winning_audios,aux] = som(db, epochs, samples, output_nodes, neig_size, eta, tau)
+
+
+    colormap([0 0 0; 0 0 1; 0 1 1; 1 0 1; 1 0 0; 0 1 0; 1 1 1; 1 1 0; 0.5 0.5 0 ; 0.5 1 0.5 ; 0.33 0.34 0.33 ; 0 0.5 0.5; 0.8 0 0.2])
 
     %% class dictionary
     dict = containers.Map;
@@ -10,13 +9,16 @@ function som(db, epochs, samples, output_nodes, neig_size, eta, tau)
     dict('iy')=8;dict('oa')=9;dict('oo')=10;dict('uh')=11;dict('uw')=12;
 
 
- 
+    
+
+    % This function organize the spectrograms (previously created) from the
+    % database passed as an argument
 
     grid_size = sqrt(output_nodes);
     %colormap(hsv);
 
     % Format input and tags
-    [patterns, tags] = formatData(db, samples);
+    [patterns, tags, files] = formatData(db, samples);
     [num_patt, num_feat] = size(patterns);
     
     new_tags = zeros(1,length(tags));
@@ -71,23 +73,23 @@ function som(db, epochs, samples, output_nodes, neig_size, eta, tau)
 
         % Save winning node
         pos(pat) = i;
+        
+
+        
     end
     
-    a = ones(1, output_nodes)*num_patt+1;
+    a = ones(1, output_nodes)*num_patt+1;    
     a(pos) = 1:num_patt;
     
+    winning_audios = reshape(a,grid_size,grid_size);
 
     p = [tags;0];
-    aux = p(reshape(a,grid_size,grid_size));
-    image(aux+1);
-    
-    L = line(ones(13),ones(13), 'LineWidth',8);
-    set(L,{'color'},mat2cell(scale,ones(1,13),3))
-    legend('background', 'ae', 'ah','aw','eh','ei','er','ih','iy','oa','oo','uh','uw', 'Location', 'northeastoutside') 
+    aux = p(reshape(a,grid_size,grid_size))+1;
+    image(aux);
 end
 
 
-function [patterns, tags] = formatData(db, samples)
+function [patterns, tags, files] = formatData(db, samples)
     type_db = strsplit(db,'\');
     type_db = type_db{length(type_db)};
     f = strcat(pwd, '\', type_db, '_spectrograms');
@@ -109,6 +111,10 @@ function [patterns, tags] = formatData(db, samples)
             tags = [tags; files(i).name(4:5)];
         end 
     end
+    
+    %% create audio files references
+    
+    
     
     cd ..
 end
