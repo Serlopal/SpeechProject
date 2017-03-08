@@ -3,6 +3,7 @@ global pos;
 global dict;
 global winning_audios;
 global db;
+global slider_gender;
 % GUI1 MATLAB code for gui1.fig
 %      GUI1, by itself, creates a new GUI1 or raises the existing
 %      singleton*.
@@ -26,7 +27,7 @@ global db;
 
 % Edit the above text to modify the response to help gui1
 
-% Last Modified by GUIDE v2.5 23-Feb-2017 17:03:35
+% Last Modified by GUIDE v2.5 08-Mar-2017 11:30:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -89,12 +90,27 @@ function update_button_Callback(hObject, eventdata, handles)
 axes(handles.axes1);
 cla;
 
-popup_sel_index = get(handles.popupmenu1, 'Value');
+%%gender selector
+popup_sel_index = get(handles.slider_gender, 'Value');
+global slider_gender;
+switch popup_sel_index
+    case 1
+        slider_gender = 'men';
+    case 2
+        slider_gender = 'women';    
+    case 3
+        slider_gender = 'kids';
+end
+
+%Method selector
+popup_sel_index = get(handles.slider_method, 'Value');
 switch popup_sel_index
     case 1
         cd ..\database_process\
-        global dict;
-        [dict, vowels_men_formants, indexes_men] = formants('audio_files_women','times_women_ordered.txt');
+        global dict;global db;global slider_gender;
+         
+        [dict, vowels_men_formants, indexes_men] = ...
+            formants(strcat('audio_files_',slider_gender),strcat('times_',slider_gender,'_ordered.txt'));
         plot_clusters(vowels_men_formants, indexes_men);
         fig  = gcf;       
         dcm_obj = datacursormode(fig);
@@ -104,17 +120,34 @@ switch popup_sel_index
     case 2
         cd ..\som\
         global winning_audios;global db;
-        db = 'database_process\vowels_men';
+        db = strcat('database_process\vowels_',slider_gender);
         %% Organize spectrograms with SOM
-        epochs = 1;
+        epochs = 50;
         samples = 540; %12 is a complete speaker
         output_nodes = 1600;
         neig_size = 5;
         eta = 0.5;
         tau = 20;
+        
+        %%loading data to speed up desmostration
+        s = strcat('saved_SOM/wa_',slider_gender,'1');
+        winning_audios = load(s);
+        winning_audios = winning_audios.winning_audios;
+        s = strcat('saved_SOM/img_',slider_gender,'1');
+        img = load(s);
+        img = img.img;
 
-        [winning_audios, img] = som(db, epochs, samples, output_nodes, neig_size, eta, tau);
-
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       
+%         [winning_audios, img] = som(db, epochs, samples, output_nodes, neig_size, eta, tau);
+% 
+%         %%saving data to speed up demostration
+%         s = strcat(pwd,'\','saved_SOM', '\' ,'wa1.mat');
+%         save(s,'winning_audios');
+%         
+%         s = strcat(pwd,'\','saved_SOM', '\' ,'img1.mat');
+%         save(s,'img');
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
         plot_som(img);
         fig  = gcf;
         dcm_obj = datacursormode(fig);
@@ -163,19 +196,19 @@ end
 delete(handles.figure1)
 
 
-% --- Executes on selection change in popupmenu1.
-function popupmenu1_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
+% --- Executes on selection change in slider_method.
+function slider_method_Callback(hObject, eventdata, handles)
+% hObject    handle to slider_method (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = get(hObject,'String') returns popupmenu1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu1
+% Hints: contents = get(hObject,'String') returns slider_method contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from slider_method
 
 
 % --- Executes during object creation, after setting all properties.
-function popupmenu1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
+function slider_method_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider_method (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -248,3 +281,22 @@ global pos;global dict;global db;
  
 
     
+
+
+% --- Executes on button press in slider_gender.
+function slider_gender_Callback(hObject, eventdata, handles)
+% hObject    handle to slider_gender (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes during object creation, after setting all properties.
+function slider_gender_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider_gender (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+     set(hObject,'BackgroundColor','white');
+end
+
+set(hObject, 'String', {'Men', 'Women','Kids'});
