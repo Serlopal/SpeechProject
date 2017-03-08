@@ -79,32 +79,36 @@ uw_vowels = vowels(uw_index_men,:);
 % hold on;
 % plot_ellipse(centroid_iy(1,1), centroid_iy(1,2), centroid_iy(2,1), centroid_iy(2,2));
 
-plot(ae_vowels(:,1),ae_vowels(:,2), 'ob' );
+% plot(ae_vowels(:,1),ae_vowels(:,2), 'ob' );
+plot(ae_vowels(:,1),ae_vowels(:,2),'LineStyle','none','Color',[0 0 1],'Marker','o');
 hold on;
-plot(ah_vowels(:,1),ah_vowels(:,2), 'or' );
+plot(ah_vowels(:,1),ah_vowels(:,2),'LineStyle','none','Color',[0 1 1],'Marker','o');
 hold on;
-plot(aw_vowels(:,1),aw_vowels(:,2), 'og' );
+plot(aw_vowels(:,1),aw_vowels(:,2),'LineStyle','none','Color',[1 0 1],'Marker','o');
 hold on;
-plot(eh_vowels(:,1),eh_vowels(:,2), 'o' );
+plot(eh_vowels(:,1),eh_vowels(:,2),'LineStyle','none','Color',[1 0 0],'Marker','o');
 hold on;
-plot(ei_vowels(:,1),ei_vowels(:,2), 'ok' );
+plot(ei_vowels(:,1),ei_vowels(:,2),'LineStyle','none','Color',[0 1 0],'Marker','o');
 hold on;
-plot(er_vowels(:,1),er_vowels(:,2), 'oy' );
+plot(er_vowels(:,1),er_vowels(:,2),'LineStyle','none','Color',[0.5 0 0.5],'Marker','o');
 hold on;
-plot(ih_vowels(:,1),ih_vowels(:,2), 'om' );
+plot(ih_vowels(:,1),ih_vowels(:,2),'LineStyle','none','Color',[1 1 0],'Marker','o');
 hold on;
-plot(iy_vowels(:,1),iy_vowels(:,2), 'oc' );
+plot(iy_vowels(:,1),iy_vowels(:,2),'LineStyle','none','Color',[0.5 0.5 0],'Marker','o');
 hold on;
-plot(oa_vowels(:,1),oa_vowels(:,2), 'o')
+plot(oa_vowels(:,1),oa_vowels(:,2),'LineStyle','none','Color',[1 0.5 0],'Marker','o');
 hold on;
-plot(oo_vowels(:,1),oo_vowels(:,2), 'o')
+plot(oo_vowels(:,1),oo_vowels(:,2),'LineStyle','none','Color',[0.33 0.34 0.33],'Marker','o');
 hold on;
-plot(uh_vowels(:,1),uh_vowels(:,2), 'o')
+plot(uh_vowels(:,1),uh_vowels(:,2),'LineStyle','none','Color',[0 0.5 0.5],'Marker','o');
 hold on;
-plot(uw_vowels(:,1),uw_vowels(:,2), 'o')
+plot(uw_vowels(:,1),uw_vowels(:,2),'LineStyle','none','Color',[0.8 0 0.2],'Marker','o');
 hold off;
 set(gca, 'ydir','reverse')
 set(gca, 'xdir','reverse')
+xlabel('1st formant (Hz)')
+ylabel('2nd formant (Hz)')
+title('Vowel Formant Plot')
 view([90 -90])
 legend('ae(had)','ah(hod)','aw(hawed)','eh(head)','ey/ei(hayed)','er(heard)','ih(hid)','iy(heed)', 'oa(hoed)', 'oo(hood)', 'uh(hud)', 'uw(who''d)')
 
