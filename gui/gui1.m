@@ -108,7 +108,8 @@ switch popup_sel_index
     case 1
         cd ..\database_process\
         global dict;global db;global slider_gender;
-         
+        db = strcat('database_process\vowels_',slider_gender);
+        
         [dict, vowels_men_formants, indexes_men] = ...
             formants(strcat('audio_files_',slider_gender),strcat('times_',slider_gender,'_ordered.txt'));
         plot_clusters(vowels_men_formants, indexes_men);
@@ -265,7 +266,8 @@ global pos;global dict;global db;
         output_txt = sprintf('(%d, %d)',pos(1), pos(2));
 
         %%load audio
-        cd ..\database_process\vowels_women\
+        cd ..
+        cd (strcat(pwd,'\',db));  
         dirinfo = dir();
         parent_dir = ismember( {dirinfo.name}, {'.', '..'});
         dirinfo(parent_dir) = [];
