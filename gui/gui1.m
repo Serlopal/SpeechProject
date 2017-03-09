@@ -1,9 +1,4 @@
 function varargout = gui1(varargin)
-global pos;
-global dict;
-global winning_audios;
-global db;
-global slider_gender;
 % GUI1 MATLAB code for gui1.fig
 %      GUI1, by itself, creates a new GUI1 or raises the existing
 %      singleton*.
@@ -90,9 +85,11 @@ function update_button_Callback(hObject, eventdata, handles)
 axes(handles.axes1);
 cla;
 
-%%gender selector
+%%gender selector to index the database
 popup_sel_index = get(handles.slider_gender, 'Value');
-global slider_gender;
+%% global variables
+global slider_gender;global dict;global db;global winning_audios;global samples;
+
 switch popup_sel_index
     case 1
         slider_gender = 'men';
@@ -102,12 +99,11 @@ switch popup_sel_index
         slider_gender = 'kids';
 end
 
-%Method selector
+%Analysis method selector (Formants-SOM)
 popup_sel_index = get(handles.slider_method, 'Value');
 switch popup_sel_index
     case 1
         cd ..\database_process\
-        global dict;global db;global slider_gender;
         db = strcat('database_process\vowels_',slider_gender);
         
         [dict, vowels_men_formants, indexes_men] = ...
@@ -120,9 +116,9 @@ switch popup_sel_index
         
     case 2
         cd ..\som\
-        global winning_audios;global db;
+        %%database used
         db = strcat('database_process\vowels_',slider_gender);
-        %% Organize spectrograms with SOM
+        %% SOM learning parameters
         epochs = 50;
         samples = 540; %12 is a complete speaker
         output_nodes = 1600;
@@ -130,29 +126,37 @@ switch popup_sel_index
         eta = 0.5;
         tau = 20;
         
-        %%loading data to speed up desmostration
-        s = strcat('saved_SOM/wa_',slider_gender,'1');
-        winning_audios = load(s);
-        winning_audios = winning_audios.winning_audios;
-        s = strcat('saved_SOM/img_',slider_gender,'1');
-        img = load(s);
-        img = img.img;
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       
-%         [winning_audios, img] = som(db, epochs, samples, output_nodes, neig_size, eta, tau);
-% 
-%         %%saving data to speed up demostration
-%         s = strcat(pwd,'\','saved_SOM', '\' ,'wa1.mat');
-%         save(s,'winning_audios');
-%         
-%         s = strcat(pwd,'\','saved_SOM', '\' ,'img1.mat');
-%         save(s,'img');
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%precomputed switch
+        precomputed_SOM = true;
         
+        
+        switch precomputed_SOM
+            case true
+                %%loading data to speed up desmostration
+                s = strcat('saved_SOM/wa_',slider_gender,'1');
+                winning_audios = load(s);
+                winning_audios = winning_audios.winning_audios;
+                s = strcat('saved_SOM/img_',slider_gender,'1');
+                img = load(s);
+                img = img.img;
+                
+            case false
+
+                [winning_audios, img] = som(db, epochs, samples, output_nodes, neig_size, eta, tau);
+
+                %%Optional code to save data to disk
+                %s = strcat(pwd,'\','saved_SOM', '\' ,'wa1.mat');
+                %save(s,'winning_audios');
+                %s = strcat(pwd,'\','saved_SOM', '\' ,'img1.mat');
+                %save(s,'img');
+        end
+        
+        %%plot SOM results
         plot_som(img);
+        %%allow sound playback selected samples
         fig  = gcf;
         dcm_obj = datacursormode(fig);
-        set(dcm_obj,'UpdateFcn',@cursor_audio);
+        set(dcm_obj,'UpdateFcn',{@cursor_SOM,handles});
         cd ..\gui\
               
 end
@@ -205,8 +209,6 @@ function slider_method_Callback(hObject, eventdata, handles)
 
 % Hints: contents = get(hObject,'String') returns slider_method contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from slider_method
-
-
 % --- Executes during object creation, after setting all properties.
 function slider_method_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to slider_method (see GCBO)
@@ -221,10 +223,11 @@ end
 
 set(hObject, 'String', {'Formants', 'SOM'});
 
-function output_txt = cursor_audio(f,event_obj)
-global pos;global winning_audios;global db;
+%%cursor function to
+function output_txt = cursor_SOM(f,event_obj,handles)
+global pos;global winning_audios;global db;global slider_gender;global samples;
     
-
+    
     %%load audio routes for db
     pos = get(event_obj,'Position');
     disp(pos);
@@ -233,23 +236,38 @@ global pos;global winning_audios;global db;
     index = winning_audios(pos(2),pos(1));
     output_txt = sprintf('(%d, %d)',pos(2), pos(1));
 
-    if (index==541)
+    %%index (samples+1) represents a cell of the map where no sample has
+    %%fallen, therefore no audio should be played
+    if (index==samples+1)%
         ;
     else
-        %%load audio
+        %%load and play audio
         cd ..
         cd (strcat(pwd,'\',db));   
         dirinfo = dir();
         parent_dir = ismember( {dirinfo.name}, {'.', '..'});
         dirinfo(parent_dir) = [];
         s = strcat(dirinfo(index).folder,'\',dirinfo(index).name);
-
-        cd ..
-        cd ..
-        cd gui\
-
+        
+        %%back to gui folder
+        cd ..\..\gui\
+        
+        %%play vowel sound
         [ys,Fs] = audioread(s);
         sound(ys, Fs);
+               
+        %%display spectogram
+        cd ..
+        cd (strcat(pwd,'\','som\vowels_',slider_gender,'_spectrograms_HD'));
+        dirinfo = dir();
+        parent_dir = ismember( {dirinfo.name}, {'.', '..'});
+        dirinfo(parent_dir) = [];
+        spectrogram = imread(strcat(dirinfo(index).folder,'\',dirinfo(index).name));
+        imshow(spectrogram,'Parent', handles.axes2);
+        
+        %back to gui folder
+        cd ..\..\gui\
+        
     end
     
 function output_txt = cursor_formants(f,event_obj)
@@ -278,13 +296,10 @@ global pos;global dict;global db;
 
         [ys,Fs] = audioread(s);
         sound(ys, Fs);
+        
+
     end
     
- 
-
-    
-
-
 % --- Executes on button press in slider_gender.
 function slider_gender_Callback(hObject, eventdata, handles)
 % hObject    handle to slider_gender (see GCBO)
