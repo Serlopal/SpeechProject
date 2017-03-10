@@ -111,7 +111,7 @@ switch popup_sel_index
         plot_clusters(vowels_men_formants, indexes_men);
         fig  = gcf;       
         dcm_obj = datacursormode(fig);
-        set(dcm_obj,'UpdateFcn',@cursor_formants);
+        set(dcm_obj,'UpdateFcn',{@cursor_formants,handles});
         cd ..\gui\
         
     case 2
@@ -270,8 +270,8 @@ global pos;global winning_audios;global db;global slider_gender;global samples;
         
     end
     
-function output_txt = cursor_formants(f,event_obj)
-global pos;global dict;global db;
+function output_txt = cursor_formants(f,event_obj,handles)
+global pos;global dict;global db;global slider_gender;
 
     %%load audio routes for db
     pos = get(event_obj,'Position');
@@ -297,6 +297,17 @@ global pos;global dict;global db;
         [ys,Fs] = audioread(s);
         sound(ys, Fs);
         
+        
+        %%display spectogram
+        cd (strcat('..\som\vowels_',slider_gender,'_spectrograms_HD'));
+        dirinfo = dir();
+        parent_dir = ismember( {dirinfo.name}, {'.', '..'});
+        dirinfo(parent_dir) = [];
+        spectrogram = imread(strcat(dirinfo(index).folder,'\',dirinfo(index).name));
+        imshow(spectrogram,'Parent', handles.axes2);
+
+        %back to gui folder
+        cd ..\..\gui\
 
     end
     
