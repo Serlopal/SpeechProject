@@ -1,5 +1,6 @@
 function [winning_audios,aux] = som(db, epochs, samples, output_nodes, neig_size, eta, tau)
-
+% This function organize the spectrograms (previously created) from the
+% database passed as an argument
 
     colormap([0 0 0; 0 0 1; 0 1 1; 1 0 1; 1 0 0; 0 1 0; 1 1 1; 1 1 0; 0.5 0.5 0 ; 0.5 1 0.5 ; 0.33 0.34 0.33 ; 0 0.5 0.5; 0.8 0 0.2])
 
@@ -9,19 +10,14 @@ function [winning_audios,aux] = som(db, epochs, samples, output_nodes, neig_size
     dict('iy')=8;dict('oa')=9;dict('oo')=10;dict('uh')=11;dict('uw')=12;
 
 
-    
-
-    % This function organize the spectrograms (previously created) from the
-    % database passed as an argument
-
-    grid_size = sqrt(output_nodes);
-    %colormap(hsv);
 
     % Format input and tags
+    grid_size = sqrt(output_nodes);
     [patterns, tags, files] = formatData(db, samples);
     [num_patt, num_feat] = size(patterns);
     
     new_tags = zeros(1,length(tags));
+    
     %% tag conversion
     aux1 = [];
     for i=1:length(tags)
@@ -73,9 +69,6 @@ function [winning_audios,aux] = som(db, epochs, samples, output_nodes, neig_size
 
         % Save winning node
         pos(pat) = i;
-        
-
-        
     end
     
     a = ones(1, output_nodes)*num_patt+1;    
@@ -85,7 +78,6 @@ function [winning_audios,aux] = som(db, epochs, samples, output_nodes, neig_size
 
     p = [tags;0];
     aux = p(reshape(a,grid_size,grid_size))+1;
-%     image(aux);
 end
 
 
@@ -111,10 +103,6 @@ function [patterns, tags, files] = formatData(db, samples)
             tags = [tags; files(i).name(4:5)];
         end 
     end
-    
-    %% create audio files references
-    
-    
     
     cd ..
 end
