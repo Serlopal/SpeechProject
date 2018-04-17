@@ -281,7 +281,7 @@ global pos;global dict;global db;global slider_gender;
     keySet = strcat(num2str(pos(1)),num2str(pos(2)));
     if (isKey(dict,keySet))
         index = dict(keySet);
-        output_txt = sprintf('(%d, %d)',pos(1), pos(2));
+        output_txt = sprintf('(%0.0f, %0.0f)',pos(1), pos(2));
 
         %%load audio
         cd ..
